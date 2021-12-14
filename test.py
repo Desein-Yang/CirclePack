@@ -2,6 +2,7 @@ import matplotlib
 import math
 import click
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Framework Simuated Annealing
 # initialize solution
@@ -12,7 +13,9 @@ import numpy as np
 #   annealing (decrease t)
 # return solution 
 
-
+# @click.command()
+# @click.option('--L', default=10, help='Number of greetings.')
+# @click.option('--W', default=10, help='The person to greet.')
 def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
     iters = 0
     now_t = ini_t
@@ -85,9 +88,7 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
         fit = fitness(solu)
         return solu, fit
 
-    solu, old_fit = ini(radius)
-
-
+   
     def draw(solu):
         fig,ax = plt.subplots(figsize=(10,10))
         for (x,y,r) in solu:
@@ -97,6 +98,8 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
         plt.ylim((0,W))
         plt.title('Solution')
         plt.show()
+
+    solu, old_fit = ini(radius)
 
     while(now_t > min_t and iters < max_iters): # 终止条件
         new_solu = mutate(solu)# 扰动产生新解
@@ -121,4 +124,7 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
     return solu, old_fit
     
 if __name__ == "__main__":
+    L=10 
+    W=10
+    radius=[1,1,1]
     main(L,W,radius)
