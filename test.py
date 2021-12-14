@@ -19,9 +19,11 @@ import matplotlib.pyplot as plt
 def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
     iters = 0
     now_t = ini_t
+    f=open('./log.txt', 'a')
 
     def is_placed(x,y,r):
         if min(L-x,W-y,x,y) > r:
+            f.write("the placed solution is"+str((x,y,r))+'\n')
             return True
         else:
             return False  
@@ -43,7 +45,7 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
             return False
 
     def add(i,solu):
-        solu[i] = (np.random.rand(0,1)*L,np.random.rand(0,1)*W,radius[i])
+        solu[i] = (np.random.rand()*L,np.random.rand()*W,radius[i])
         solu = adjust_overlap(i,solu)
         x,y,r = solu[i]
         if not is_placed(x,y,r):
@@ -84,10 +86,9 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
     def ini(radius):
         n = len(radius)
         max_r = max(radius)
-        solu = [(np.random.rand(0,1)*L,np.random.rand(0,1)*W, radius[i]) for i in range(n)] # 空解
+        solu = [[np.random.rand()*L,np.random.rand()*W, radius[i]] for i in range(n)] # 空解
         fit = fitness(solu)
         return solu, fit
-
    
     def draw(solu):
         fig,ax = plt.subplots(figsize=(10,10))
@@ -105,18 +106,20 @@ def main(L,W,radius,max_iters=100,min_t=0,ini_t=100,alpha=0.9):
         new_solu = mutate(solu)# 扰动产生新解
         new_fit = fitness(new_solu)
         delta_t = new_fit-old_fit 
-        print(solu)
         if delta_t > 0:
             solu = new_solu
             old_fit = new_fit
         else: # Metropolis 准则
-            prob = np.random.rand(0,1)
+            prob = np.random.rand()
             if prob > math.exp(-delta_t/now_t):
                 solu = new_solu
                 old_fit = new_fit
         now_t = alpha * now_t # 指数下降
-        print("now temperatuer:",now_t)
-        print("fitness:",new_fit)
+        
+        f.write("iters:"+str(iters)+'\n')
+        f.write("now temperatuer:"+str(now_t)+'\n')
+        f.write("fitness:"+str(new_fit)+'\n')
+        f.write("solution"+str(solu)+'\n')
         iters += 1
         if iters % 100 == 0:
             draw(solu)
